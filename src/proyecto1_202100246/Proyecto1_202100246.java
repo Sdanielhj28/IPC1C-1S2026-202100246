@@ -1,6 +1,9 @@
 package proyecto1_202100246;
 
 import javax.swing.*;
+import java.io.FileWriter;
+import java.io.PrintWriter;
+import java.time.LocalDateTime;
 /**
  *
  * @author daniel
@@ -50,13 +53,31 @@ public class Proyecto1_202100246 extends JFrame {
     }
     
     public void agregarProducto(){
-    
+        String cod = JOptionPane.showInputDialog("Codigo");
+        
+        //Validar codigo duplicado
+        
+        for(int i = 0; i < contador; i++){
+            if(codigo[i].equals(cod)){
+                JOptionPane.showMessageDialog(null,"El codigo ya existe");
+                return;
+            }            
+        }
         String n = JOptionPane.showInputDialog("Nombre del producto");
         String c = JOptionPane.showInputDialog("Categoria");
         double p = Double.parseDouble(JOptionPane.showInputDialog("Precio"));
         int cant = Integer.parseInt(JOptionPane.showInputDialog("Cantidad"));
-        String cod = JOptionPane.showInputDialog("Codigo");
         
+        //validar precio
+        if(cant < 0){
+            JOptionPane.showMessageDialog(null,"El precio debe ser positivo");
+            return;
+        }
+        //Validar cantidad
+        if(cant < 0){
+            JOptionPane.showMessageDialog(null,"Cantidad invalida");
+            return;
+        }
         nombre[contador] = n;
         categoria[contador] = c;
         precio[contador] = p;
@@ -113,11 +134,26 @@ public class Proyecto1_202100246 extends JFrame {
                 if(cant <= cantidad[i]){
                     cantidad[i] -= cant;
                     double total = cant * precio[i];
-                    JOptionPane.showMessageDialog(null,"Venta registrada\nTotal: "+total);
-                } else {
-                    JOptionPane.showMessageDialog(null,"No hay suficiente stock");
+                    try{
+                    FileWriter archivo = new FileWriter("ventas.txt", true);
+                    PrintWriter escribir = new PrintWriter(archivo);
+                    escribir.println(
+                        codigo[i] + "," +
+                        nombre[i] + "," +
+                        cant + "," +
+                        total + "," +
+                        LocalDateTime.now()
+                    );
+                    escribir.close();
+                }catch(Exception e){
+                    JOptionPane.showMessageDialog(null,"Error al guardar venta");
                 }
-                return;
+                JOptionPane.showMessageDialog(null,"Venta registrada\nTotal: "+total);
+            }else{
+                JOptionPane.showMessageDialog(null,"No hay suficiente stock");
+            }
+            return;
+
             }
         }
         JOptionPane.showMessageDialog(null,"Producto no encontrado");
@@ -129,14 +165,43 @@ public class Proyecto1_202100246 extends JFrame {
     }
     
     public void generarReporte(){
-        String reporte = "";
-        for(int i = 0; i < contador; i++){
-            reporte += "Codigo: " + codigo[i] +
-                    " | Nombre: " + nombre[i] +
-                    " | Cantidad; " + cantidad[i] + "\n";
+        try{
+            FileWriter archivo = new FileWriter("Reporte_stock.html");
+            PrintWriter escribir = new PrintWriter(archivo);
+            
+            escribir.println("<html>");
+            escribir.println("<head><title>Reporte Stock</title></head>");
+            escribir.println("<body>");
+            escribir.println("<h1>Inventario</h1>");
+            escribir.println("<table border='1'>");
+
+            escribir.println("<tr>");
+            escribir.println("<th>Codigo</th>");
+            escribir.println("<th>Nombre</th>");
+            escribir.println("<th>Categoria</th>");
+            escribir.println("<th>Precio</th>");
+            escribir.println("<th>Cantidad</th>");
+            escribir.println("</tr>");
+            
+            for(int i = 0; i < contador; i++){
+               escribir.println("<tr>");
+               escribir.println("<td>"+codigo[i]+"</td>");
+               escribir.println("<td>"+nombre[i]+"</td>");
+               escribir.println("<td>"+categoria[i]+"</td>");
+               escribir.println("<td>"+precio[i]+"</td>");
+               escribir.println("<td>"+cantidad[i]+"</td>");
+               escribir.println("</tr>");
+            }
+            
+            escribir.println("</table>");
+            escribir.println("</body");
+            escribir.println("</html");
+            
+            escribir.close();
+            JOptionPane.showMessageDialog(null,"Reporte generado");
+        }catch(Exception e){
+            JOptionPane.showMessageDialog(null,"Error al generar reporte");
         }
-        JOptionPane.showMessageDialog(null,"reporte");
-        
     }
     public static void main(String[] args) {
         Proyecto1_202100246 ventana = new Proyecto1_202100246();
