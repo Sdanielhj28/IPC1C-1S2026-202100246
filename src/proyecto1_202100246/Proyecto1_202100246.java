@@ -4,6 +4,9 @@ import javax.swing.*;
 import java.io.FileWriter;
 import java.io.PrintWriter;
 import java.time.LocalDateTime;
+import java.awt.Desktop;
+import java.io.File;
+
 /**
  *
  * @author daniel
@@ -30,6 +33,8 @@ public class Proyecto1_202100246 extends JFrame {
         setTitle("Sistema Inventario Tienda");
         setSize(400,400);
         setLayout(null);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setLocationRelativeTo(null);
         
         btnAgregar.setBounds(100,30,200,30);
         add(btnAgregar);
@@ -69,7 +74,7 @@ public class Proyecto1_202100246 extends JFrame {
         int cant = Integer.parseInt(JOptionPane.showInputDialog("Cantidad"));
         
         //validar precio
-        if(cant < 0){
+        if(p < 0){
             JOptionPane.showMessageDialog(null,"El precio debe ser positivo");
             return;
         }
@@ -173,6 +178,7 @@ public class Proyecto1_202100246 extends JFrame {
             escribir.println("<head><title>Reporte Stock</title></head>");
             escribir.println("<body>");
             escribir.println("<h1>Inventario</h1>");
+            escribir.println("<p>Fecha: " + LocalDateTime.now() + "</p>");
             escribir.println("<table border='1'>");
 
             escribir.println("<tr>");
@@ -192,20 +198,18 @@ public class Proyecto1_202100246 extends JFrame {
                escribir.println("<td>"+cantidad[i]+"</td>");
                escribir.println("</tr>");
             }
-            
             escribir.println("</table>");
-            escribir.println("</body");
-            escribir.println("</html");
-            
+            escribir.println("</body>");
+            escribir.println("</html>");
             escribir.close();
-            JOptionPane.showMessageDialog(null,"Reporte generado");
-        }catch(Exception e){
-            JOptionPane.showMessageDialog(null,"Error al generar reporte");
+                Desktop.getDesktop().open(new File("Reporte_stock.html"));
+            }catch(Exception e){
+                JOptionPane.showMessageDialog(null,"No se pudo abrir el reporte");
+            JOptionPane.showMessageDialog(null,"Reporte generado"); 
         }
     }
     public static void main(String[] args) {
         Proyecto1_202100246 ventana = new Proyecto1_202100246();
         ventana.setVisible(true);
     }
-    
 }
