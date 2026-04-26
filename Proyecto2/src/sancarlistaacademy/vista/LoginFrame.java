@@ -1,20 +1,19 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package sancarlistaacademy.vista;
 
 import javax.swing.JOptionPane;
 import sancarlistaacademy.modelo.Persistencia;
 import sancarlistaacademy.modelo.SistemaAcademy;
 import sancarlistaacademy.modelo.Usuario;
+import sancarlistaacademy.controlador.LoginControlador;
 
 public class LoginFrame extends javax.swing.JFrame {
 
     private SistemaAcademy sistema;
+    private LoginControlador controlador;
 
     public LoginFrame(SistemaAcademy sistema) {
         this.sistema = sistema;
+        this.controlador = new LoginControlador(sistema);
         initComponents();
         setLocationRelativeTo(null);
     }
@@ -86,7 +85,7 @@ public class LoginFrame extends javax.swing.JFrame {
         String codigo = txtCodigo.getText();
         String pass = new String(txtPassword.getPassword());
 
-        Usuario usuario = sistema.autenticar(codigo, pass);
+        Usuario usuario = controlador.iniciarSesion(codigo, pass);
 
         if (usuario == null) {
             JOptionPane.showMessageDialog(this, "Credenciales incorrectas");
