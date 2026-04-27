@@ -4,6 +4,10 @@ import javax.swing.JOptionPane;
 import sancarlistaacademy.modelo.Persistencia;
 import sancarlistaacademy.modelo.SistemaAcademy;
 import sancarlistaacademy.modelo.Usuario;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import javax.swing.JFileChooser;
 
 public class AdminFrame extends javax.swing.JFrame {
 
@@ -54,6 +58,10 @@ public class AdminFrame extends javax.swing.JFrame {
         jScrollPane1 = new javax.swing.JScrollPane();
         txtAreaMonitor = new javax.swing.JTextArea();
         btnCrearSeccion = new javax.swing.JButton();
+        btnCargarInstructoresCSV = new javax.swing.JButton();
+        btnCargarEstudiantesCSV = new javax.swing.JButton();
+        btnCargarCursosCSV = new javax.swing.JButton();
+        btnCargarCursosCSV.setText("Cargar Cursos CSV");
         btnCrearSeccion.setText("Crear Sección");
         btnCrearSeccion.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -92,6 +100,26 @@ public class AdminFrame extends javax.swing.JFrame {
             }
         });
         
+        btnCargarInstructoresCSV.setText("Cargar Instructores CSV");
+        btnCargarInstructoresCSV.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cargarInstructoresCSV();
+            }
+        });
+        
+        btnCargarEstudiantesCSV.setText("Cargar Estudiantes CSV");
+        btnCargarEstudiantesCSV.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cargarEstudiantesCSV();
+            }
+        });
+        
+        btnCargarCursosCSV.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cargarCursosCSV();
+            }
+        });
+        
         btnCerrarSesion.setText("Cerrar Sesión");
         btnCerrarSesion.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -114,7 +142,9 @@ public class AdminFrame extends javax.swing.JFrame {
                     .addComponent(btnCrearInstructor, javax.swing.GroupLayout.DEFAULT_SIZE, 180, Short.MAX_VALUE)
                     .addComponent(btnCrearEstudiante, javax.swing.GroupLayout.DEFAULT_SIZE, 180, Short.MAX_VALUE)
                     .addComponent(btnCrearCurso, javax.swing.GroupLayout.DEFAULT_SIZE, 180, Short.MAX_VALUE)
-                    .addComponent(btnCrearSeccion, javax.swing.GroupLayout.DEFAULT_SIZE, 180, Short.MAX_VALUE)
+                    .addComponent(btnCrearSeccion, javax.swing.GroupLayout.DEFAULT_SIZE, 180, Short.MAX_VALUE).addComponent(btnCargarInstructoresCSV, javax.swing.GroupLayout.DEFAULT_SIZE, 180, Short.MAX_VALUE)
+                    .addComponent(btnCargarEstudiantesCSV, javax.swing.GroupLayout.DEFAULT_SIZE, 180, Short.MAX_VALUE)
+                    .addComponent(btnCargarCursosCSV, javax.swing.GroupLayout.DEFAULT_SIZE, 180, Short.MAX_VALUE)
                     .addComponent(btnVerBitacora, javax.swing.GroupLayout.DEFAULT_SIZE, 180, Short.MAX_VALUE)
                     .addComponent(btnCerrarSesion, javax.swing.GroupLayout.DEFAULT_SIZE, 180, Short.MAX_VALUE))
                 .addGap(30, 30, 30)
@@ -135,6 +165,12 @@ public class AdminFrame extends javax.swing.JFrame {
                         .addComponent(btnCrearCurso)
                         .addGap(12, 12, 12)
                         .addComponent(btnCrearSeccion)
+                        .addGap(12, 12, 12)
+                        .addComponent(btnCargarInstructoresCSV)
+                        .addGap(12, 12, 12)
+                        .addComponent(btnCargarEstudiantesCSV)
+                        .addGap(12, 12, 12)
+                        .addComponent(btnCargarCursosCSV)
                         .addGap(12, 12, 12)
                         .addComponent(btnVerBitacora)
                         .addGap(12, 12, 12)
@@ -254,7 +290,161 @@ public class AdminFrame extends javax.swing.JFrame {
     JOptionPane.showMessageDialog(this, ok ? "Sección creada" : "No se pudo crear la sección");
     Persistencia.guardarSistema(sistema);
 }
+    private File seleccionarArchivoCSV() {
+    JFileChooser chooser = new JFileChooser();
+    int opcion = chooser.showOpenDialog(this);
 
+    if (opcion == JFileChooser.APPROVE_OPTION) {
+        return chooser.getSelectedFile();
+    }
+
+    return null;
+}
+    
+    private void cargarInstructoresCSV() {
+    File archivo = seleccionarArchivoCSV();
+    if (archivo == null) return;
+
+    int cargados = 0;
+    int errores = 0;
+
+    try {
+        BufferedReader br = new BufferedReader(new FileReader(archivo));
+        String linea;
+
+        while ((linea = br.readLine()) != null) {
+            String[] datos = linea.split(",");
+
+            if (datos.length != 5) {
+                errores++;
+                continue;
+            }
+
+            boolean ok = sistema.crearInstructor(
+                datos[0].trim(),
+                datos[1].trim(),
+                datos[2].trim(),
+                datos[3].trim(),
+                datos[4].trim()
+            );
+
+            if (ok) cargados++;
+            else errores++;
+        }
+
+        br.close();
+        Persistencia.guardarSistema(sistema);
+
+        JOptionPane.showMessageDialog(this,
+            "Carga de instructores finalizada\n"
+            + "Cargados: " + cargados + "\n"
+            + "Errores: " + errores
+        );
+
+    } catch (Exception e) {
+        JOptionPane.showMessageDialog(this, "Error al leer CSV: " + e.getMessage());
+    }
+}
+    
+    private void cargarEstudiantesCSV() {
+    File archivo = seleccionarArchivoCSV();
+    if (archivo == null) return;
+
+    int cargados = 0;
+    int errores = 0;
+
+    try {
+        BufferedReader br = new BufferedReader(new FileReader(archivo));
+        String linea;
+
+        while ((linea = br.readLine()) != null) {
+            String[] datos = linea.split(",");
+
+            if (datos.length != 5) {
+                errores++;
+                continue;
+            }
+
+            boolean ok = sistema.crearEstudiante(
+                datos[0].trim(),
+                datos[1].trim(),
+                datos[2].trim(),
+                datos[3].trim(),
+                datos[4].trim()
+            );
+
+            if (ok) cargados++;
+            else errores++;
+        }
+
+        br.close();
+        Persistencia.guardarSistema(sistema);
+
+        JOptionPane.showMessageDialog(this,
+            "Carga de estudiantes finalizada\n"
+            + "Cargados: " + cargados + "\n"
+            + "Errores: " + errores
+        );
+
+    } catch (Exception e) {
+        JOptionPane.showMessageDialog(this, "Error al leer CSV: " + e.getMessage());
+    }
+}
+    
+    private void cargarCursosCSV() {
+    File archivo = seleccionarArchivoCSV();
+    if (archivo == null) return;
+
+    int cargados = 0;
+    int errores = 0;
+
+    try {
+        BufferedReader br = new BufferedReader(new FileReader(archivo));
+        String linea;
+
+        while ((linea = br.readLine()) != null) {
+            String[] datos = linea.split(",");
+
+            if (datos.length != 5) {
+                errores++;
+                continue;
+            }
+
+            int creditos;
+
+            try {
+                creditos = Integer.parseInt(datos[3].trim());
+            } catch (NumberFormatException e) {
+                errores++;
+                continue;
+            }
+
+            boolean ok = sistema.crearCurso(
+                datos[0].trim(),
+                datos[1].trim(),
+                datos[2].trim(),
+                creditos,
+                datos[4].trim()
+            );
+
+            if (ok) cargados++;
+            else errores++;
+        }
+
+        br.close();
+        Persistencia.guardarSistema(sistema);
+
+        JOptionPane.showMessageDialog(this,
+            "Carga de cursos finalizada\n"
+            + "Cargados: " + cargados + "\n"
+            + "Errores: " + errores
+        );
+
+    } catch (Exception e) {
+        JOptionPane.showMessageDialog(this, "Error al leer CSV: " + e.getMessage());
+    }
+}
+    
     private void cerrarSesion() {
         ejecutando = false;
         sistema.cerrarSesion(usuario);
@@ -271,6 +461,9 @@ public class AdminFrame extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTextArea txtAreaMonitor;
     private javax.swing.JButton btnCrearSeccion;
+    private javax.swing.JButton btnCargarInstructoresCSV;
+    private javax.swing.JButton btnCargarEstudiantesCSV;
+    private javax.swing.JButton btnCargarCursosCSV;
 }   
 /**
  *
