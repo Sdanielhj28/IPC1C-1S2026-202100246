@@ -55,11 +55,11 @@ public class AdminFrame extends javax.swing.JFrame {
         txtAreaMonitor = new javax.swing.JTextArea();
         btnCrearSeccion = new javax.swing.JButton();
         btnCrearSeccion.setText("Crear Sección");
-btnCrearSeccion.addActionListener(new java.awt.event.ActionListener() {
-    public void actionPerformed(java.awt.event.ActionEvent evt) {
-        crearSeccion();
-    }
-});
+        btnCrearSeccion.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                crearSeccion();
+            }
+        });
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Panel Administrador");
@@ -91,7 +91,7 @@ btnCrearSeccion.addActionListener(new java.awt.event.ActionListener() {
                 JOptionPane.showMessageDialog(AdminFrame.this, sistema.obtenerBitacoraTexto());
             }
         });
-
+        
         btnCerrarSesion.setText("Cerrar Sesión");
         btnCerrarSesion.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -99,8 +99,6 @@ btnCrearSeccion.addActionListener(new java.awt.event.ActionListener() {
             }
         });
         
-        
-
         txtAreaMonitor.setColumns(20);
         txtAreaMonitor.setRows(5);
         jScrollPane1.setViewportView(txtAreaMonitor);
@@ -147,7 +145,7 @@ btnCrearSeccion.addActionListener(new java.awt.event.ActionListener() {
         pack();
     }
 
-private void crearInstructor() {
+    private void crearInstructor() {
     String codigo = JOptionPane.showInputDialog(this, "Código:");
     if (codigo == null) return; // canceló
     if (codigo.trim().isEmpty()) {
@@ -181,7 +179,7 @@ private void crearInstructor() {
     Persistencia.guardarSistema(sistema);
 }
 
-private void crearEstudiante() {
+    private void crearEstudiante() {
     String codigo = JOptionPane.showInputDialog(this, "Código:");
     if (codigo == null) return;
 
@@ -202,7 +200,7 @@ private void crearEstudiante() {
     Persistencia.guardarSistema(sistema);
 }
 
-private void crearCurso() {
+    private void crearCurso() {
     String codigo = JOptionPane.showInputDialog(this, "Código curso:");
     if (codigo == null) return;
 
@@ -231,7 +229,7 @@ private void crearCurso() {
     Persistencia.guardarSistema(sistema);
 }
 
-private void crearSeccion() {
+    private void crearSeccion() {
     String codigoSeccion = JOptionPane.showInputDialog(this, "Código de sección:");
     if (codigoSeccion == null) return;
     if (codigoSeccion.trim().isEmpty()) {
@@ -251,7 +249,7 @@ private void crearSeccion() {
     String horario = JOptionPane.showInputDialog(this, "Horario:");
     if (horario == null) return;
 
-    boolean ok = sistema.crearSeccion(codigoSeccion, codigoCurso, codigoInstructor, semestre, horario);
+    boolean ok = sistema.crearSeccion(codigoSeccion.trim(), codigoCurso.trim(), codigoInstructor.trim(), semestre.trim(), horario.trim());
 
     JOptionPane.showMessageDialog(this, ok ? "Sección creada" : "No se pudo crear la sección");
     Persistencia.guardarSistema(sistema);

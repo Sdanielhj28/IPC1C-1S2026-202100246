@@ -208,6 +208,43 @@ public boolean inscribirEstudianteEnSeccion(String codigoEstudiante, String codi
     return resultado;
 }
 
+public boolean desasignarEstudianteDeSeccion(String codigoEstudiante, String codigoSeccion) {
+    Usuario usuario = buscarUsuario(codigoEstudiante);
+    Seccion seccion = buscarSeccion(codigoSeccion);
+
+    if (usuario == null || seccion == null) {
+        return false;
+    }
+
+    if (!usuario.getRol().equals("ESTUDIANTE")) {
+        return false;
+    }
+
+    if (!seccion.yaInscrito(codigoEstudiante)) {
+        return false;
+    }
+
+    // No permitir desasignar si ya tiene notas en esa sección
+    for (int i = 0; i < cantidadNotas; i++) {
+        if (notas[i].getCodigoEstudiante().equals(codigoEstudiante)
+                && notas[i].getCodigoSeccion().equals(codigoSeccion)) {
+            return false;
+        }
+    }
+
+    boolean ok = seccion.desasignarEstudiante(codigoEstudiante);
+
+    if (ok) {
+        ((Estudiante) usuario).disminuirCursos();
+        registrarEvento("ESTUDIANTE", codigoEstudiante, "DESASIGNAR_SECCION", "EXITOSA",
+                "Desasignado de " + codigoSeccion);
+    } else {
+        registrarEvento("ESTUDIANTE", codigoEstudiante, "DESASIGNAR_SECCION", "FALLIDA",
+                "No se pudo desasignar de " + codigoSeccion);
+    }
+
+    return ok;
+}
     public boolean crearNota(String codigoCurso, String codigoSeccion, String codigoEstudiante, double ponderacion, double notaValor, String fecha, String etiqueta, String codigoInstructor) {
         if (cantidadNotas >= notas.length) {
             return false;
@@ -260,6 +297,27 @@ public boolean inscribirEstudianteEnSeccion(String codigoEstudiante, String codi
         
         return suma / sumaPonderacion;
     }
+    
+    public String generarReporteNotasSeccion(String codigoSeccion) {
+    String texto = "";
+    texto += "Reporte de Calificaciones por Sección\n";
+    texto += "Sección: " + codigoSeccion + "\n\n";
+
+    for (int i = 0; i < cantidadNotas; i++) {
+        if (notas[i].getCodigoSeccion().equals(codigoSeccion)) {
+            texto += "Curso: " + notas[i].getCodigoCurso() + "\n";
+            texto += "Estudiante: " + notas[i].getCodigoEstudiante() + "\n";
+            texto += "Etiqueta: " + notas[i].getEtiqueta() + "\n";
+            texto += "Ponderación: " + notas[i].getPonderacion() + "\n";
+            texto += "Nota: " + notas[i].getNota() + "\n";
+            texto += "-----------------------------\n";
+        }
+    }
+
+    registrarEvento("INSTRUCTOR", "N/A", "GENERAR_REPORTE", "EXITOSA", "Reporte generado");
+
+    return texto;
+}
 
     public String obtenerBitacoraTexto() {
     String texto = "";
