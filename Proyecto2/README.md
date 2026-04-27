@@ -40,3 +40,30 @@ Para ejecutar el sistema:
 
 ```bash
 java -jar sancarlistaacademy.jar
+
+src/
+ ├── modelo/
+ ├── vista/
+ ├── controlador/
+
+🛠️ Tecnologías utilizadas
+Java
+NetBeans
+Swing
+Serialización de objetos (.ser)
+Git & GitHub
+
+📑 Documentación
+
+El repositorio incluye:
+
+Manual de Usuario
+Manual Técnico
+
+📌 Notas
+Asegurarse de ingresar correctamente los códigos al realizar operaciones
+Verificar formato correcto de archivos CSV antes de cargarlos
+
+🚀 Conclusión
+
+El sistema integra múltiples funcionalidades académicas en una aplicación estructurada, cumpliendo con los requerimientos del proyecto mediante una arquitectura organizada y escalable.
