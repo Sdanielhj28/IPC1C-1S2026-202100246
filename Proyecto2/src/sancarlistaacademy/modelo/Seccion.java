@@ -1,6 +1,5 @@
 package sancarlistaacademy.modelo;
 
-
 import java.io.Serializable;
 
 public class Seccion implements Serializable{
